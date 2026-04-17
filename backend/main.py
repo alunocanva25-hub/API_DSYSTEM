@@ -18,7 +18,7 @@ from backend.utils.auth import hash_password
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.0.2 do DS STUDIO GO com JWT, usuários, filtros e sync base.",
+    description="API V2.0.0.3 do DS STUDIO GO com JWT, Swagger Authorize corrigido, usuários, filtros e sync base.",
 )
 
 app.add_middleware(

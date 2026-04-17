@@ -4,12 +4,15 @@ import hashlib
 from datetime import datetime, timedelta, timezone
 
 import jwt
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from backend.config import JWT_ALGORITHM, JWT_EXPIRE_MINUTES, JWT_SECRET
 from backend.database import get_db
 from backend.models.user import User
+
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def hash_password(password: str) -> str:
@@ -42,16 +45,16 @@ class CurrentUser:
 
 
 def get_current_user(
-    authorization: str | None = Header(default=None),
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> CurrentUser:
-    if not authorization or not authorization.startswith("Bearer "):
+    if not credentials or not credentials.credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token ausente ou inválido.",
         )
 
-    token = authorization.replace("Bearer ", "", 1).strip()
+    token = credentials.credentials.strip()
 
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
