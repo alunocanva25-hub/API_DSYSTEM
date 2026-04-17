@@ -13,12 +13,14 @@ from backend.routes.auth import router as auth_router
 from backend.routes.sync import router as sync_router
 from backend.routes.transactions import router as transactions_router
 from backend.routes.users import router as users_router
+from backend.routes.settings import router as settings_router
+from backend.routes.studio import router as studio_router
 from backend.utils.auth import hash_password
 
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.0.3 do DS STUDIO GO com JWT, Swagger Authorize corrigido, usuários, filtros e sync base.",
+    description="API V2.0.0.4 do DS STUDIO GO com JWT, Swagger Authorize, troca de senha, status e início da integração Studio.",
 )
 
 app.add_middleware(
@@ -34,6 +36,8 @@ app.include_router(users_router)
 app.include_router(appointments_router)
 app.include_router(transactions_router)
 app.include_router(sync_router)
+app.include_router(settings_router)
+app.include_router(studio_router)
 
 
 @app.get("/")

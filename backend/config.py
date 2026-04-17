@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 APP_NAME = "DS STUDIO GO API"
-APP_VERSION = "2.0.0.3"
+APP_VERSION = "2.0.0.4"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
