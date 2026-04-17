@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ds-studio-go-api
+    runtime: python
+    plan: free
+    buildCommand: python -m pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: python -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.14.0
+      - key: JWT_SECRET
+        generateValue: true

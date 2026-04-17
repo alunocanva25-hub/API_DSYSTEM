@@ -1,0 +1,6 @@
+fastapi>=0.136,<1
+uvicorn[standard]>=0.44,<1
+sqlalchemy>=2.0.49,<3
+pydantic>=2.13,<3
+python-multipart>=0.0.26,<1
+PyJWT>=2.12.1,<3
