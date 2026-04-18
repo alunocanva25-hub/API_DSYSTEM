@@ -41,6 +41,9 @@ def create_user(
         full_name=payload.full_name,
         role=payload.role,
         is_active=payload.is_active,
+        source=payload.source,
+        external_id=payload.external_id,
+        must_change_password=payload.must_change_password,
     )
     db.add(user)
     db.commit()

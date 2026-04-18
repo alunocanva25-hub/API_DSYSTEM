@@ -53,6 +53,7 @@ def change_password(
         )
 
     user.password_hash = hash_password(payload.new_password)
+    user.must_change_password = False
     db.commit()
     db.refresh(user)
     return UserOut.model_validate(user)

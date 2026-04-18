@@ -16,6 +16,9 @@ class UserCreate(BaseModel):
     full_name: str
     role: str = "admin"
     is_active: bool = True
+    source: str = "api_local"
+    external_id: str | None = None
+    must_change_password: bool = False
 
 
 class UserUpdate(BaseModel):
@@ -23,6 +26,9 @@ class UserUpdate(BaseModel):
     full_name: str | None = None
     role: str | None = None
     is_active: bool | None = None
+    source: str | None = None
+    external_id: str | None = None
+    must_change_password: bool | None = None
 
 
 class UserOut(BaseModel):
@@ -33,6 +39,9 @@ class UserOut(BaseModel):
     full_name: str
     role: str
     is_active: bool
+    source: str
+    external_id: str | None = None
+    must_change_password: bool
     created_at: datetime
     updated_at: datetime
 

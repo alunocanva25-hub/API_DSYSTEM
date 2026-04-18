@@ -15,5 +15,8 @@ class User(Base):
     full_name: Mapped[str] = mapped_column(String(120), nullable=False)
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="admin")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    source: Mapped[str] = mapped_column(String(30), nullable=False, default="seed")
+    external_id: Mapped[str | None] = mapped_column(String(80), nullable=True, index=True)
+    must_change_password: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=utcnow_naive, nullable=False)
     updated_at: Mapped[DateTime] = mapped_column(DateTime, default=utcnow_naive, onupdate=utcnow_naive, nullable=False)
