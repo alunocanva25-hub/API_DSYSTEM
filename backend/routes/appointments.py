@@ -19,6 +19,7 @@ router = APIRouter(prefix="/api/appointments", tags=["Appointments"])
 def list_appointments(
     include_deleted: bool = Query(default=False),
     professional_name: str | None = Query(default=None),
+    source: str | None = Query(default=None),
     date_from: datetime | None = Query(default=None),
     date_to: datetime | None = Query(default=None),
     db: Session = Depends(get_db),
@@ -32,6 +33,8 @@ def list_appointments(
         stmt = stmt.where(Appointment.deleted == False)  # noqa: E712
     if professional_name:
         stmt = stmt.where(Appointment.professional_name == professional_name)
+    if source:
+        stmt = stmt.where(Appointment.source == source)
     if date_from:
         stmt = stmt.where(Appointment.start_at >= date_from)
     if date_to:
@@ -54,6 +57,8 @@ def create_appointment(
 
     item = Appointment(
         client_uid=payload.client_uid,
+        external_id=payload.external_id,
+        source=payload.source,
         client_name=payload.client_name,
         professional_name=payload.professional_name,
         service_name=payload.service_name,

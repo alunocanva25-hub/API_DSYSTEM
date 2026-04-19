@@ -7,6 +7,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class TransactionBase(BaseModel):
     client_uid: str | None = None
+    external_id: str | None = None
+    source: str = "api_local"
     kind: str = Field(description="entrada ou saida")
     amount: float = Field(gt=0)
     category: str
@@ -21,6 +23,8 @@ class TransactionCreate(TransactionBase):
 
 class TransactionUpdate(BaseModel):
     client_uid: str | None = None
+    external_id: str | None = None
+    source: str | None = None
     kind: str | None = None
     amount: float | None = Field(default=None, gt=0)
     category: str | None = None

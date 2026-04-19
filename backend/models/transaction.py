@@ -11,6 +11,8 @@ class Transaction(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     client_uid: Mapped[str | None] = mapped_column(String(80), unique=True, nullable=True, index=True)
+    external_id: Mapped[str | None] = mapped_column(String(80), nullable=True, index=True)
+    source: Mapped[str] = mapped_column(String(30), nullable=False, default="api_local", index=True)
     kind: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     amount: Mapped[float] = mapped_column(Float, nullable=False)
     category: Mapped[str] = mapped_column(String(80), nullable=False, index=True)

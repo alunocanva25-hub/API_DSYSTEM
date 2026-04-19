@@ -7,6 +7,8 @@ from pydantic import BaseModel, ConfigDict
 
 class AppointmentBase(BaseModel):
     client_uid: str | None = None
+    external_id: str | None = None
+    source: str = "api_local"
     client_name: str
     professional_name: str
     service_name: str
@@ -22,6 +24,8 @@ class AppointmentCreate(AppointmentBase):
 
 class AppointmentUpdate(BaseModel):
     client_uid: str | None = None
+    external_id: str | None = None
+    source: str | None = None
     client_name: str | None = None
     professional_name: str | None = None
     service_name: str | None = None

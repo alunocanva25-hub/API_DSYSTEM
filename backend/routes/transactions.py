@@ -20,6 +20,7 @@ def list_transactions(
     include_deleted: bool = Query(default=False),
     kind: str | None = Query(default=None),
     category: str | None = Query(default=None),
+    source: str | None = Query(default=None),
     date_from: datetime | None = Query(default=None),
     date_to: datetime | None = Query(default=None),
     db: Session = Depends(get_db),
@@ -35,6 +36,8 @@ def list_transactions(
         stmt = stmt.where(Transaction.kind == kind)
     if category:
         stmt = stmt.where(Transaction.category == category)
+    if source:
+        stmt = stmt.where(Transaction.source == source)
     if date_from:
         stmt = stmt.where(Transaction.occurred_at >= date_from)
     if date_to:
@@ -57,6 +60,8 @@ def create_transaction(
 
     item = Transaction(
         client_uid=payload.client_uid,
+        external_id=payload.external_id,
+        source=payload.source,
         kind=payload.kind,
         amount=payload.amount,
         category=payload.category,

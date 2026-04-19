@@ -11,6 +11,8 @@ class Appointment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     client_uid: Mapped[str | None] = mapped_column(String(80), unique=True, nullable=True, index=True)
+    external_id: Mapped[str | None] = mapped_column(String(80), nullable=True, index=True)
+    source: Mapped[str] = mapped_column(String(30), nullable=False, default="api_local", index=True)
     client_name: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
     professional_name: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
     service_name: Mapped[str] = mapped_column(String(120), nullable=False)
