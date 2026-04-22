@@ -8,6 +8,9 @@ from sqlalchemy.orm import Session
 from backend.config import APP_NAME, APP_VERSION
 from backend.database import Base, SessionLocal, engine
 from backend.models.user import User
+from backend.models.client import Client
+from backend.models.professional import Professional
+from backend.models.service import Service
 from backend.routes.appointments import router as appointments_router
 from backend.routes.auth import router as auth_router
 from backend.routes.sync import router as sync_router
@@ -17,12 +20,16 @@ from backend.routes.settings import router as settings_router
 from backend.routes.studio import router as studio_router
 from backend.routes.desktop_users import router as desktop_users_router
 from backend.routes.studio_data import router as studio_data_router
+from backend.routes.master_data import router as master_data_router
+from backend.routes.studio_master_data import router as studio_master_data_router
+from backend.routes.go_write import router as go_write_router
+from backend.routes.desktop_pull import router as desktop_pull_router
 from backend.utils.auth import hash_password
 
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.0.6 do DS STUDIO GO com JWT, sync real de usuários, agendamentos e financeiro do desktop, status e integração Studio.",
+    description="API V2.0.0.7 do DS STUDIO GO com bases mestre, GO write bridge, desktop pull bridge e evolução segura sobre a base V2.0.0.6.",
 )
 
 app.add_middleware(
@@ -42,6 +49,10 @@ app.include_router(settings_router)
 app.include_router(studio_router)
 app.include_router(desktop_users_router)
 app.include_router(studio_data_router)
+app.include_router(master_data_router)
+app.include_router(studio_master_data_router)
+app.include_router(go_write_router)
+app.include_router(desktop_pull_router)
 
 
 @app.get("/")
@@ -68,7 +79,7 @@ def seed_default_master() -> None:
 
         user = User(
             username="master",
-            password_hash=hash_password("123456"),
+            password_hash=hash_password("master123"),
             full_name="Master DS Studio GO",
             role="master",
             is_active=True,
