@@ -34,6 +34,7 @@ class AppointmentUpdate(BaseModel):
     start_at: datetime | None = None
     end_at: datetime | None = None
     deleted: bool | None = None
+    deleted_at: datetime | None = None
 
 
 class AppointmentOut(AppointmentBase):
@@ -46,3 +47,6 @@ class AppointmentOut(AppointmentBase):
     updated_by: str | None = None
     created_at: datetime
     updated_at: datetime
+    sync_status: str | None = None
+    desktop_imported: bool = False
+    last_source: str | None = None

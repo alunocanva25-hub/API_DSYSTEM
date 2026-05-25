@@ -59,6 +59,8 @@ def create_appointment(
         client_uid=payload.client_uid,
         external_id=payload.external_id,
         source=payload.source,
+        last_source=payload.source,
+        sync_status="created",
         client_name=payload.client_name,
         professional_name=payload.professional_name,
         service_name=payload.service_name,
@@ -75,13 +77,7 @@ def create_appointment(
     return AppointmentOut.model_validate(item)
 
 
-@router.put("/{appointment_id}", response_model=AppointmentOut)
-def update_appointment(
-    appointment_id: int,
-    payload: AppointmentUpdate,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
-) -> AppointmentOut:
+def _apply_appointment_update(appointment_id: int, payload: AppointmentUpdate, db: Session, current_user) -> AppointmentOut:
     require_admin_or_master(current_user)
 
     item = db.get(Appointment, appointment_id)
@@ -100,10 +96,32 @@ def update_appointment(
     if not item.deleted:
         item.deleted_at = None
 
+    item.last_source = item.source
+    item.sync_status = "updated"
     item.updated_by = current_user.username
     db.commit()
     db.refresh(item)
     return AppointmentOut.model_validate(item)
+
+
+@router.put("/{appointment_id}", response_model=AppointmentOut)
+def update_appointment(
+    appointment_id: int,
+    payload: AppointmentUpdate,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+) -> AppointmentOut:
+    return _apply_appointment_update(appointment_id, payload, db, current_user)
+
+
+@router.patch("/{appointment_id}", response_model=AppointmentOut)
+def patch_appointment(
+    appointment_id: int,
+    payload: AppointmentUpdate,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+) -> AppointmentOut:
+    return _apply_appointment_update(appointment_id, payload, db, current_user)
 
 
 @router.delete("/{appointment_id}")
@@ -125,6 +143,8 @@ def delete_appointment(
 
     item.deleted = True
     item.deleted_at = utcnow_naive()
+    item.last_source = item.source
+    item.sync_status = "deleted"
     item.updated_by = current_user.username
     db.commit()
     return {"message": "Agendamento excluído logicamente."}
@@ -144,6 +164,8 @@ def restore_appointment(
 
     item.deleted = False
     item.deleted_at = None
+    item.sync_status = "restored"
+    item.last_source = item.source
     item.updated_by = current_user.username
     db.commit()
     return {"message": "Agendamento restaurado com sucesso."}

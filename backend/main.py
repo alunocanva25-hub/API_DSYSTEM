@@ -29,7 +29,7 @@ from backend.utils.auth import hash_password
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.0.7 do DS STUDIO GO com bases mestre, GO write bridge, desktop pull bridge e evolução segura sobre a base V2.0.0.6.",
+    description="API V2.0.0.8 do DS STUDIO GO com PATCH, upsert resiliente por external_id, seed estável e evolução segura sobre a base V2.0.0.7.",
 )
 
 app.add_middleware(
@@ -79,7 +79,7 @@ def seed_default_master() -> None:
 
         user = User(
             username="master",
-            password_hash=hash_password("master123"),
+            password_hash=hash_password("123456"),
             full_name="Master DS Studio GO",
             role="master",
             is_active=True,

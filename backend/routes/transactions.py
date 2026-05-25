@@ -62,6 +62,8 @@ def create_transaction(
         client_uid=payload.client_uid,
         external_id=payload.external_id,
         source=payload.source,
+        last_source=payload.source,
+        sync_status="created",
         kind=payload.kind,
         amount=payload.amount,
         category=payload.category,
@@ -77,13 +79,7 @@ def create_transaction(
     return TransactionOut.model_validate(item)
 
 
-@router.put("/{transaction_id}", response_model=TransactionOut)
-def update_transaction(
-    transaction_id: int,
-    payload: TransactionUpdate,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
-) -> TransactionOut:
+def _apply_transaction_update(transaction_id: int, payload: TransactionUpdate, db: Session, current_user) -> TransactionOut:
     require_admin_or_master(current_user)
 
     item = db.get(Transaction, transaction_id)
@@ -102,10 +98,32 @@ def update_transaction(
     if not item.deleted:
         item.deleted_at = None
 
+    item.last_source = item.source
+    item.sync_status = "updated"
     item.updated_by = current_user.username
     db.commit()
     db.refresh(item)
     return TransactionOut.model_validate(item)
+
+
+@router.put("/{transaction_id}", response_model=TransactionOut)
+def update_transaction(
+    transaction_id: int,
+    payload: TransactionUpdate,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+) -> TransactionOut:
+    return _apply_transaction_update(transaction_id, payload, db, current_user)
+
+
+@router.patch("/{transaction_id}", response_model=TransactionOut)
+def patch_transaction(
+    transaction_id: int,
+    payload: TransactionUpdate,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+) -> TransactionOut:
+    return _apply_transaction_update(transaction_id, payload, db, current_user)
 
 
 @router.delete("/{transaction_id}")
@@ -127,6 +145,8 @@ def delete_transaction(
 
     item.deleted = True
     item.deleted_at = utcnow_naive()
+    item.last_source = item.source
+    item.sync_status = "deleted"
     item.updated_by = current_user.username
     db.commit()
     return {"message": "Transação excluída logicamente."}
@@ -146,6 +166,8 @@ def restore_transaction(
 
     item.deleted = False
     item.deleted_at = None
+    item.last_source = item.source
+    item.sync_status = "restored"
     item.updated_by = current_user.username
     db.commit()
     return {"message": "Transação restaurada com sucesso."}
