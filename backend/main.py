@@ -29,7 +29,15 @@ from backend.utils.auth import hash_password
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.0.8 do DS STUDIO GO com PATCH, upsert resiliente por external_id, seed estável e evolução segura sobre a base V2.0.0.7.",
+    description="API V2.0.0.9.1 do DS STUDIO GO com CORS ajustado para os domínios publicados do GO e evolução segura sobre a base V2.0.0.9.",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex=r"^(https://ds-studio-go\.dsystemstudio\.com\.br|https://ds-go\.dsystemstudio\.com\.br|https://api-dsystem\.onrender\.com|http://localhost(?::\d+)?|http://127\.0\.0\.1(?::\d+)?)$",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.add_middleware(
