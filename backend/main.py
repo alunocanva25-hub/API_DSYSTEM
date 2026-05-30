@@ -29,7 +29,7 @@ from backend.utils.auth import hash_password
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.0.9.1 do DS STUDIO GO com CORS ajustado para os domínios publicados do GO e evolução segura sobre a base V2.0.0.9.",
+    description="API V2.0.1.0 do DS STUDIO GO com suporte oficial a PostgreSQL e compatibilidade preservada com a base atual.",
 )
 
 app.add_middleware(
