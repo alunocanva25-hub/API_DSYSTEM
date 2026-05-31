@@ -24,12 +24,14 @@ from backend.routes.master_data import router as master_data_router
 from backend.routes.studio_master_data import router as studio_master_data_router
 from backend.routes.go_write import router as go_write_router
 from backend.routes.desktop_pull import router as desktop_pull_router
+from backend.routes.go_clients import router as go_clients_router
+from backend.routes.desktop_pull_clients import router as desktop_pull_clients_router
 from backend.utils.auth import hash_password
 
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.1.0 do DS STUDIO GO com suporte oficial a PostgreSQL e compatibilidade preservada com a base atual.",
+    description="API V2.0.1.1 do DS STUDIO GO com bridge de clientes GO → API → desktop e compatibilidade preservada com a base atual.",
 )
 
 app.add_middleware(
@@ -61,6 +63,8 @@ app.include_router(master_data_router)
 app.include_router(studio_master_data_router)
 app.include_router(go_write_router)
 app.include_router(desktop_pull_router)
+app.include_router(go_clients_router)
+app.include_router(desktop_pull_clients_router)
 
 
 @app.get("/")
