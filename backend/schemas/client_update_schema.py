@@ -11,3 +11,4 @@ class ClientUpdate(BaseModel):
     email: str | None = None
     notes: str | None = None
     is_active: bool | None = None
+    deleted: bool | None = None

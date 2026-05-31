@@ -14,6 +14,8 @@ class ClientOut(BaseModel):
     email: str | None = None
     notes: str | None = None
     is_active: bool
+    deleted: bool = False
+    deleted_at: datetime | None = None
     created_by: str | None = None
     updated_by: str | None = None
     created_at: datetime

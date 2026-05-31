@@ -31,7 +31,7 @@ from backend.utils.auth import hash_password
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.1.2 do DS STUDIO GO com PATCH/PUT para clients, inativação lógica de clientes e compatibilidade preservada com a base atual.",
+    description="API V2.0.1.3 do DS STUDIO GO com sinal técnico de exclusão no pull de clients e compatibilidade preservada com a base atual.",
 )
 
 app.add_middleware(

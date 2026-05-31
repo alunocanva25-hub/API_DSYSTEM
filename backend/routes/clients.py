@@ -14,6 +14,26 @@ from backend.utils.permissions import require_admin_or_master, require_master
 router = APIRouter(prefix="/api/clients", tags=["Clients"])
 
 
+def _client_out(item: Client) -> ClientOut:
+    deleted = not bool(item.is_active)
+    return ClientOut(
+        id=item.id,
+        external_id=item.external_id,
+        source=item.source,
+        name=item.name,
+        phone=item.phone,
+        email=item.email,
+        notes=item.notes,
+        is_active=item.is_active,
+        deleted=deleted,
+        deleted_at=item.updated_at if deleted else None,
+        created_by=item.created_by,
+        updated_by=item.updated_by,
+        created_at=item.created_at,
+        updated_at=item.updated_at,
+    )
+
+
 @router.get("", response_model=list[ClientOut])
 def list_clients(
     source: str | None = Query(default=None),
@@ -28,7 +48,7 @@ def list_clients(
     if active_only:
         stmt = stmt.where(Client.is_active == True)  # noqa: E712
     items = db.scalars(stmt.order_by(Client.name.asc())).all()
-    return [ClientOut.model_validate(item) for item in items]
+    return [_client_out(item) for item in items]
 
 
 def _apply_client_update(client_id: int, payload: ClientUpdate, db: Session, current_user) -> ClientOut:
@@ -38,13 +58,20 @@ def _apply_client_update(client_id: int, payload: ClientUpdate, db: Session, cur
         raise HTTPException(status_code=404, detail="Cliente não encontrado.")
 
     data = payload.model_dump(exclude_unset=True)
+
+    if "deleted" in data:
+        deleted = bool(data.pop("deleted"))
+        data["is_active"] = not deleted
+        if deleted and (not item.notes or "Excluído no DS STUDIO GO" not in item.notes):
+            data["notes"] = "Excluído no DS STUDIO GO"
+
     for key, value in data.items():
         setattr(item, key, value)
 
     item.updated_by = current_user.username
     db.commit()
     db.refresh(item)
-    return ClientOut.model_validate(item)
+    return _client_out(item)
 
 
 @router.put("/{client_id}", response_model=ClientOut)
@@ -79,6 +106,8 @@ def deactivate_client(
         raise HTTPException(status_code=404, detail="Cliente não encontrado.")
 
     item.is_active = False
+    if not item.notes or "Excluído no DS STUDIO GO" not in item.notes:
+        item.notes = "Excluído no DS STUDIO GO"
     item.updated_by = current_user.username
     db.commit()
     return {"message": "Cliente inativado com sucesso."}
