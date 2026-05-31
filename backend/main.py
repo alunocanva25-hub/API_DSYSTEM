@@ -20,8 +20,8 @@ from backend.routes.settings import router as settings_router
 from backend.routes.studio import router as studio_router
 from backend.routes.desktop_users import router as desktop_users_router
 from backend.routes.studio_data import router as studio_data_router
-from backend.routes.master_data import router as master_data_router
 from backend.routes.studio_master_data import router as studio_master_data_router
+from backend.routes.clients import router as clients_router
 from backend.routes.go_write import router as go_write_router
 from backend.routes.desktop_pull import router as desktop_pull_router
 from backend.routes.go_clients import router as go_clients_router
@@ -31,7 +31,7 @@ from backend.utils.auth import hash_password
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="API V2.0.1.1 do DS STUDIO GO com bridge de clientes GO → API → desktop e compatibilidade preservada com a base atual.",
+    description="API V2.0.1.2 do DS STUDIO GO com PATCH/PUT para clients, inativação lógica de clientes e compatibilidade preservada com a base atual.",
 )
 
 app.add_middleware(
@@ -59,7 +59,7 @@ app.include_router(settings_router)
 app.include_router(studio_router)
 app.include_router(desktop_users_router)
 app.include_router(studio_data_router)
-app.include_router(master_data_router)
+app.include_router(clients_router)
 app.include_router(studio_master_data_router)
 app.include_router(go_write_router)
 app.include_router(desktop_pull_router)
